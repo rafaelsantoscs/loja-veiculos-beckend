@@ -1,0 +1,195 @@
+package iam.solucoesdigitais.baseappjwt.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import iam.solucoesdigitais.baseappjwt.dto.MaterialDTO;
+import iam.solucoesdigitais.baseappjwt.dto.MaterialRequestDTO;
+import iam.solucoesdigitais.baseappjwt.dto.StatusUpdateDTO;
+import iam.solucoesdigitais.baseappjwt.model.Material;
+import iam.solucoesdigitais.baseappjwt.model.Setor;
+import iam.solucoesdigitais.baseappjwt.model.Unidade;
+import iam.solucoesdigitais.baseappjwt.repository.MaterialRepository;
+import iam.solucoesdigitais.baseappjwt.repository.SetorRepository;
+import iam.solucoesdigitais.baseappjwt.repository.UnidadeRepository;
+import iam.solucoesdigitais.enums.StatusMaterial;
+import iam.solucoesdigitais.enums.TipoMaterial;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class MaterialService {
+    
+    @Autowired
+    private MaterialRepository materialRepository;
+    
+    @Autowired
+    private UnidadeRepository unidadeRepository;
+    
+    @Autowired
+    private SetorRepository setorRepository;
+    
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findAll() {
+        return materialRepository.findAllWithUnidadeAndSetor()
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    public MaterialDTO findById(Long id) {
+        Material material = materialRepository.findByIdWithUnidadeAndSetor(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com ID: " + id));
+        return new MaterialDTO(material);
+    }
+    
+    @Transactional(readOnly = true)
+    public MaterialDTO findByTombamento(String tombamento) {
+        Material material = materialRepository.findByTombamento(tombamento)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com tombamento: " + tombamento));
+        return new MaterialDTO(material);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findByTipo(TipoMaterial tipo) {
+        return materialRepository.findByTipo(tipo)
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findByStatus(StatusMaterial status) {
+        return materialRepository.findByStatus(status)
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findByUnidadeIdAndSetorId(Long unidadeId, Long setorId) {
+        return materialRepository.findByUnidadeIdAndSetorId(unidadeId, setorId)
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findByUnidadeId(Long unidadeId) {
+        return materialRepository.findByUnidadeIdWithJoins(unidadeId)
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    public List<MaterialDTO> findFiltered(TipoMaterial tipo, Long unidadeId, StatusMaterial status, String tombamento) {
+        return materialRepository.findFiltered(tipo, unidadeId, status, tombamento)
+                .stream()
+                .map(MaterialDTO::new)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public MaterialDTO create(MaterialRequestDTO request) {
+        if (materialRepository.existsByTombamento(request.getTombamento())) {
+            throw new RuntimeException("Já existe um material com o tombamento: " + request.getTombamento());
+        }
+        
+        Unidade unidade = unidadeRepository.findById(request.getUnidadeId())
+                .orElseThrow(() -> new RuntimeException("Unidade não encontrada com ID: " + request.getUnidadeId()));
+        
+        Setor setor = setorRepository.findById(request.getSetorId())
+                .orElseThrow(() -> new RuntimeException("Setor não encontrado com ID: " + request.getSetorId()));
+        
+        if (!setor.getUnidade().getId().equals(unidade.getId())) {
+            throw new RuntimeException("O setor não pertence à unidade selecionada");
+        }
+        
+        Material material = new Material();
+        material.setTipo(request.getTipo());
+        material.setTombamento(request.getTombamento());
+        material.setStatus(request.getStatus());
+        material.setUnidade(unidade);
+        material.setSetor(setor);
+        material.setMarca(request.getMarca());
+        material.setEspecificacoes(request.getEspecificacoes());
+        material.setCadastradoPor(request.getCadastradoPor());
+        
+        Material saved = materialRepository.save(material);
+        return new MaterialDTO(saved);
+    }
+
+    @Transactional
+    public MaterialDTO update(Long id, MaterialRequestDTO request) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com ID: " + id));
+
+        // Verificar se o novo tombamento já existe (apenas se for diferente do atual)
+        if (!material.getTombamento().equals(request.getTombamento()) &&
+            materialRepository.existsByTombamento(request.getTombamento())) {
+            throw new RuntimeException("Já existe um material com o tombamento: " + request.getTombamento());
+        }
+
+        Unidade unidade = unidadeRepository.findById(request.getUnidadeId())
+                .orElseThrow(() -> new RuntimeException("Unidade não encontrada com ID: " + request.getUnidadeId()));
+
+        Setor setor = setorRepository.findById(request.getSetorId())
+                .orElseThrow(() -> new RuntimeException("Setor não encontrado com ID: " + request.getSetorId()));
+
+        if (!setor.getUnidade().getId().equals(unidade.getId())) {
+            throw new RuntimeException("O setor não pertence à unidade selecionada");
+        }
+
+        material.setTipo(request.getTipo());
+        material.setTombamento(request.getTombamento());
+        material.setStatus(request.getStatus());
+        material.setUnidade(unidade);
+        material.setSetor(setor);
+        material.setMarca(request.getMarca());
+        material.setEspecificacoes(request.getEspecificacoes());
+
+        Material updated = materialRepository.save(material);
+        return new MaterialDTO(updated);
+    }
+
+    @Transactional
+    public MaterialDTO updateStatus(Long id, StatusUpdateDTO request) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com ID: " + id));
+
+        // Validar se o status não é nulo
+        if (request.getStatusMaterial() == null) {
+            throw new RuntimeException("Status do material é obrigatório");
+        }
+
+        // Validar se o material tem unidade e setor válidos
+        if (material.getUnidade() == null) {
+            throw new RuntimeException("Material não possui unidade válida");
+        }
+        
+        if (material.getSetor() == null) {
+            throw new RuntimeException("Material não possui setor válido");
+        }
+
+        material.setStatus(request.getStatusMaterial());
+
+        try {
+            Material updated = materialRepository.save(material);
+            return new MaterialDTO(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar status do material: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material não encontrado com ID: " + id));
+
+        materialRepository.delete(material);
+    }
+}
