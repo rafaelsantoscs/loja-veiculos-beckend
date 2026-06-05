@@ -44,12 +44,6 @@ public class AuthController {
             if (usuarioEncontradoOpt.isPresent()) {
                 Usuario usuarioEncontrado = usuarioEncontradoOpt.get(); // ← Declara aqui
 
-                // Verifica se o e-mail foi confirmado
-                if (!usuarioEncontrado.getEmailConfirmado()) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body("E-mail ainda não confirmado. Por favor, verifique sua caixa de entrada.");
-                }
-
                 // Verifica se a senha está correta
                 if (passwordEncoder.matches(usuario.getPassword(), usuarioEncontrado.getPassword())) {
                     String token = jwtTokenService.generateToken(usuarioEncontrado);

@@ -13,9 +13,6 @@ import iam.solucoesdigitais.baseappjwt.util.EmailValidatorService;
 
 import java.util.List;
 import java.util.Optional;
-import iam.solucoesdigitais.baseappjwt.model.ConfirmationToken;
-import iam.solucoesdigitais.baseappjwt.service.ConfirmationTokenService;
-import iam.solucoesdigitais.baseappjwt.service.EmailService;
 
 
 @Service
@@ -29,12 +26,6 @@ public class UsuarioService {
     
     @Autowired
     private EmailValidatorService emailValidatorService;
-    
-    @Autowired
-    private ConfirmationTokenService confirmationTokenService;
-
-    @Autowired
-    private EmailService emailService;
 
     
     // Buscar todos os usuários
@@ -82,30 +73,8 @@ public class UsuarioService {
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         }
 
-        
-        // Garante que o campo será sempre false até que o usuário confirme
-        usuario.setEmailConfirmado(false); 
-        
-        // Salva o usuário
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
+        usuario.setEmailConfirmado(true);
 
-        // Gera e salva o token
-        String token = confirmationTokenService.gerarTokenParaUsuario(usuarioSalvo);
-
-        // Monta o link
-        //String link = "http://localhost:3000/confirmar-email?token=" + token;
-        String link = "https://frotavsa.iamtec.org/confirmar-email?token=" + token;
-
-        // Envia e-mail
-        emailService.sendEmail(
-            "Confirmação de E-mail",
-            usuarioSalvo.getEmail(),
-            "Olá, " + usuarioSalvo.getNome() + "!\n\nClique no link abaixo para confirmar seu e-mail:\n" + link
-        );
-        
-    
-       
-        
         return usuarioRepository.save(usuario);
     }
 
