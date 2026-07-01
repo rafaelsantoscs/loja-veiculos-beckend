@@ -83,29 +83,10 @@ public class UsuarioService {
         }
 
         
-        // Garante que o campo será sempre false até que o usuário confirme
-        usuario.setEmailConfirmado(false); 
+        // Email confirmado automaticamente (validação desabilitada)
+        usuario.setEmailConfirmado(true); 
         
         // Salva o usuário
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-
-        // Gera e salva o token
-        String token = confirmationTokenService.gerarTokenParaUsuario(usuarioSalvo);
-
-        // Monta o link
-        //String link = "http://localhost:3000/confirmar-email?token=" + token;
-        String link = "https://frotavsa.iamtec.org/confirmar-email?token=" + token;
-
-        // Envia e-mail
-        emailService.sendEmail(
-            "Confirmação de E-mail",
-            usuarioSalvo.getEmail(),
-            "Olá, " + usuarioSalvo.getNome() + "!\n\nClique no link abaixo para confirmar seu e-mail:\n" + link
-        );
-        
-    
-       
-        
         return usuarioRepository.save(usuario);
     }
 

@@ -27,11 +27,7 @@ public class ImplementacaoUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("Usuário não foi encontrado");
 		}
 		
-		  if (!usuario.getEmailConfirmado()) {
-			  System.out.println("⚠️ E-mail não confirmado para o usuário: " + username);
-	            throw new UsernameNotFoundException("E-mail não confirmado. Verifique sua caixa de entrada.");
-	        }
-		  System.out.println("✅ Usuário autenticado com sucesso: " + username);
+		System.out.println("✅ Usuário autenticado com sucesso: " + username);
 		return new User(usuario.getUsername(), usuario.getPassword(), usuario.getAuthorities());
 	}
 }
