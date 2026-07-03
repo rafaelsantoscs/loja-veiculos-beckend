@@ -71,9 +71,28 @@ public class VeiculoService {
         veiculo.setUnicoDono(dto.getUnicoDono());
         veiculo.setBlindado(dto.getBlindado());
 
+        if (dto.getOpcionais() != null) {
+            veiculo.getOpcionais().clear();
+            veiculo.getOpcionais().addAll(dto.getOpcionais());
+        }
+
         repository.save(veiculo);
 
         return VeiculoMapper.toResponse(veiculo);
+    }
+
+    /**
+     * Incrementa o contador de visualizações (chamado pela página pública).
+     */
+    public void registrarVisualizacao(Long id) {
+
+        Veiculo veiculo = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+
+        Integer atual = veiculo.getVisualizacoes() == null ? 0 : veiculo.getVisualizacoes();
+        veiculo.setVisualizacoes(atual + 1);
+
+        repository.save(veiculo);
     }
 
     public VeiculoResponseDTO cadastrar(VeiculoRequestDTO dto) {

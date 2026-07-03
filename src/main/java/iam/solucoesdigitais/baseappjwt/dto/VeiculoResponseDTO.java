@@ -2,9 +2,11 @@ package iam.solucoesdigitais.baseappjwt.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 import iam.solucoesdigitais.enums.Cambio;
 import iam.solucoesdigitais.enums.Combustivel;
+import iam.solucoesdigitais.enums.OpcionalVeiculo;
 import iam.solucoesdigitais.enums.StatusVeiculo;
 
 public class VeiculoResponseDTO {
@@ -41,6 +43,10 @@ public class VeiculoResponseDTO {
     private LocalDate dataEntrada;
 
     private String fotoPrincipal;
+
+    private Integer visualizacoes;
+
+    private Set<OpcionalVeiculo> opcionais;
 
     // ── Getters e Setters ────────────────────────────────────────────
 
@@ -106,4 +112,10 @@ public class VeiculoResponseDTO {
 
     public String getFotoPrincipal() { return fotoPrincipal; }
     public void setFotoPrincipal(String fotoPrincipal) { this.fotoPrincipal = fotoPrincipal; }
+
+    public Integer getVisualizacoes() { return visualizacoes; }
+    public void setVisualizacoes(Integer visualizacoes) { this.visualizacoes = visualizacoes; }
+
+    public Set<OpcionalVeiculo> getOpcionais() { return opcionais; }
+    public void setOpcionais(Set<OpcionalVeiculo> opcionais) { this.opcionais = opcionais; }
 }

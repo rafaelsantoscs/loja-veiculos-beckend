@@ -1,5 +1,8 @@
 package iam.solucoesdigitais.baseappjwt.mapper;
 
+import java.time.LocalDate;
+import java.util.HashSet;
+
 import iam.solucoesdigitais.baseappjwt.dto.VeiculoRequestDTO;
 import iam.solucoesdigitais.baseappjwt.dto.VeiculoResponseDTO;
 import iam.solucoesdigitais.enums.StatusVeiculo;
@@ -36,7 +39,12 @@ public class VeiculoMapper {
         veiculo.setUnicoDono(dto.getUnicoDono());
         veiculo.setBlindado(dto.getBlindado());
 
+        if (dto.getOpcionais() != null) {
+            veiculo.setOpcionais(new HashSet<>(dto.getOpcionais()));
+        }
+
         veiculo.setStatus(StatusVeiculo.DISPONIVEL);
+        veiculo.setDataEntrada(LocalDate.now());
 
         return veiculo;
     }
@@ -75,6 +83,8 @@ public class VeiculoMapper {
         dto.setBlindado(veiculo.getBlindado());
 
         dto.setDataEntrada(veiculo.getDataEntrada());
+        dto.setVisualizacoes(veiculo.getVisualizacoes());
+        dto.setOpcionais(veiculo.getOpcionais());
 
         return dto;
     }

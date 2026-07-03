@@ -1,9 +1,11 @@
 package iam.solucoesdigitais.baseappjwt.dto;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import iam.solucoesdigitais.enums.Cambio;
 import iam.solucoesdigitais.enums.Combustivel;
+import iam.solucoesdigitais.enums.OpcionalVeiculo;
 
 public class VeiculoRequestDTO {
 
@@ -31,6 +33,15 @@ public class VeiculoRequestDTO {
     private Boolean aceitaTroca;
     private Boolean unicoDono;
     private Boolean blindado;
+
+    private Set<OpcionalVeiculo> opcionais;
+
+	public Set<OpcionalVeiculo> getOpcionais() {
+		return opcionais;
+	}
+	public void setOpcionais(Set<OpcionalVeiculo> opcionais) {
+		this.opcionais = opcionais;
+	}
 	public String getMarca() {
 		return marca;
 	}

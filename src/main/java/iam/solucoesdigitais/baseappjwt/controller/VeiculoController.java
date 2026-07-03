@@ -67,4 +67,15 @@ public class VeiculoController {
                 service.atualizarStatus(id, dto)
         );
     }
+
+    /**
+     * Registra uma visualização do veículo (público — página externa).
+     */
+    @PatchMapping("/{id}/visualizar")
+    public ResponseEntity<Void> visualizar(@PathVariable Long id) {
+
+        service.registrarVisualizacao(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

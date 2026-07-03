@@ -183,6 +183,23 @@ public class UsuarioService {
     }
 
 
+    /**
+     * Cria um usuário vinculado ao Google OAuth.
+     * Não verifica CPF (pode ser nulo), não envia e-mail de confirmação.
+     */
+    public Usuario salvarUsuarioGoogle(Usuario usuario) {
+        if (usuario.getUsername() != null
+                && usuarioRepository.findUserByUsername(usuario.getUsername()) != null) {
+            throw new CampoDuplicadoException("Nome de Login já existe.");
+        }
+        if (usuario.getEmail() != null
+                && usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new CampoDuplicadoException("Email já existe.");
+        }
+        usuario.setEmailConfirmado(true);
+        return usuarioRepository.save(usuario);
+    }
+
     public void alterarSenha(Long id, String senhaAtual, String novaSenha) {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));

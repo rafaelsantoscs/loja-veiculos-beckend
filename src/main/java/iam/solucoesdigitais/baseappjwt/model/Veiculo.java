@@ -4,12 +4,15 @@ import javax.persistence.*;
 
 import iam.solucoesdigitais.enums.Cambio;
 import iam.solucoesdigitais.enums.Combustivel;
+import iam.solucoesdigitais.enums.OpcionalVeiculo;
 import iam.solucoesdigitais.enums.StatusVeiculo;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "veiculo")
@@ -81,7 +84,19 @@ public class Veiculo {
 
     @Column(name = "data_entrada")
     private LocalDate dataEntrada;
-    
+
+    /**
+     * Itens opcionais do veículo (ar-condicionado, teto solar, etc).
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "veiculo_opcional",
+            joinColumns = @JoinColumn(name = "veiculo_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "opcional")
+    private Set<OpcionalVeiculo> opcionais = new HashSet<>();
+
     @OneToMany(
             mappedBy = "veiculo",
             cascade = CascadeType.ALL,
@@ -265,6 +280,14 @@ public class Veiculo {
 
     public void setDataEntrada(LocalDate dataEntrada) {
         this.dataEntrada = dataEntrada;
+    }
+
+    public Set<OpcionalVeiculo> getOpcionais() {
+        return opcionais;
+    }
+
+    public void setOpcionais(Set<OpcionalVeiculo> opcionais) {
+        this.opcionais = opcionais;
     }
 
     @Override

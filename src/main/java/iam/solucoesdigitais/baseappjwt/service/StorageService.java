@@ -23,11 +23,18 @@ public class StorageService {
      * Salva o arquivo e retorna apenas o nome gerado.
      */
     public String salvarArquivo(Long veiculoId, MultipartFile file) throws IOException {
+        return salvarArquivo("veiculos", veiculoId, file);
+    }
+
+    /**
+     * Versão genérica: salva em {base}/{subPasta}/{id}/.
+     */
+    public String salvarArquivo(String subPasta, Long id, MultipartFile file) throws IOException {
 
         Path pasta = Paths.get(
                 uploadConfig.getUploadVeiculosDir(),
-                "veiculos",
-                veiculoId.toString());
+                subPasta,
+                id.toString());
 
         Files.createDirectories(pasta);
 
@@ -69,10 +76,17 @@ public class StorageService {
      * Monta a URL pública da imagem.
      */
     public String montarUrl(Long veiculoId, String nomeArquivo) {
+        return montarUrl("veiculos", veiculoId, nomeArquivo);
+    }
+
+    /**
+     * Versão genérica: URL pública em {baseUrl}/{subPasta}/{id}/{arquivo}.
+     */
+    public String montarUrl(String subPasta, Long id, String nomeArquivo) {
 
         return uploadConfig.getBaseUrl()
-                + "/veiculos/"
-                + veiculoId
+                + "/" + subPasta + "/"
+                + id
                 + "/"
                 + nomeArquivo;
     }
