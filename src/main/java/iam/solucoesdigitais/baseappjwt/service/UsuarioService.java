@@ -13,9 +13,6 @@ import iam.solucoesdigitais.baseappjwt.util.EmailValidatorService;
 
 import java.util.List;
 import java.util.Optional;
-import iam.solucoesdigitais.baseappjwt.model.ConfirmationToken;
-import iam.solucoesdigitais.baseappjwt.service.ConfirmationTokenService;
-import iam.solucoesdigitais.baseappjwt.service.EmailService;
 
 
 @Service
@@ -29,12 +26,6 @@ public class UsuarioService {
     
     @Autowired
     private EmailValidatorService emailValidatorService;
-    
-    @Autowired
-    private ConfirmationTokenService confirmationTokenService;
-
-    @Autowired
-    private EmailService emailService;
 
     
     // Buscar todos os usuários
@@ -82,11 +73,13 @@ public class UsuarioService {
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         }
 
+
         
         // Email confirmado automaticamente (validação desabilitada)
         usuario.setEmailConfirmado(true); 
         
         // Salva o usuário
+
         return usuarioRepository.save(usuario);
     }
 

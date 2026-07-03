@@ -53,7 +53,9 @@ public class AuthController {
             }
 
             if (usuarioEncontradoOpt.isPresent()) {
+
                 Usuario usuarioEncontrado = usuarioEncontradoOpt.get();
+
 
                 // Verifica se a senha está correta
                 if (passwordEncoder.matches(usuario.getPassword(), usuarioEncontrado.getPassword())) {
