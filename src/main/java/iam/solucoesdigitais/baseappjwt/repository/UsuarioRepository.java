@@ -25,6 +25,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByRolesIn(List<String> roles);
     
     Optional<Usuario> findByUsername(String username);
-    
-    
+
+    Optional<Usuario> findByGoogleId(String googleId);
+
 }

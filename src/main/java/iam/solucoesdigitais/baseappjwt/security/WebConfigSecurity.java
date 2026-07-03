@@ -74,6 +74,24 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements H
         .antMatchers(HttpMethod.GET, "/api/postagens/faq").permitAll()
         .antMatchers("/api/postagens/**").authenticated()
         
+        // Catálogo público de veículos (loja externa)
+        .antMatchers(HttpMethod.GET, "/veiculos").permitAll()
+        .antMatchers(HttpMethod.GET, "/veiculos/{id}").permitAll()
+        .antMatchers(HttpMethod.GET, "/veiculos/*/fotos").permitAll()
+        .antMatchers(HttpMethod.PATCH, "/veiculos/*/visualizar").permitAll()
+
+        // Leads (criação pública — "estou interessado") e avaliação de usados
+        .antMatchers(HttpMethod.POST, "/leads").permitAll()
+        .antMatchers("/leads/**").authenticated()
+        .antMatchers(HttpMethod.POST, "/avaliacoes").permitAll()
+        .antMatchers("/avaliacoes/**").authenticated()
+
+        // CRM / Gestão da loja (somente autenticado)
+        .antMatchers("/vendas/**").authenticated()
+        .antMatchers("/vendedores/**").authenticated()
+        .antMatchers("/despesas/**").authenticated()
+        .antMatchers("/dashboard/**").authenticated()
+        
         // Endpoints de autenticação e recursos públicos
         .antMatchers("/auth/**").permitAll()
         .antMatchers("/password/**").permitAll()

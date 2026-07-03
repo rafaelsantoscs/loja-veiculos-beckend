@@ -24,12 +24,18 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(@org.springframework.lang.NonNull ResourceHandlerRegistry registry) {
         // Configurar acesso aos uploads de postagens
         String uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize().toString();
-        
+
         registry.addResourceHandler("/uploads/postagens/**")
                 .addResourceLocations("file:" + uploadPath + "/");
 
-        // Manter configuração existente para outros uploads
+        // Servir fotos de veículos e outros uploads a partir do diretório absoluto C:/uploads/
+        // Em Linux/produção, as fotos ficam em /var/uploads/
+        String os = System.getProperty("os.name").toLowerCase();
+        String baseUploadLocation = os.contains("windows")
+                ? "file:C:/uploads/"
+                : "file:/var/uploads/";
+
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations(baseUploadLocation);
     }
 }

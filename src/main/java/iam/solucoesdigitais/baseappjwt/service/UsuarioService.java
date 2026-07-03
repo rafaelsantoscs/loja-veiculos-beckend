@@ -73,7 +73,12 @@ public class UsuarioService {
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         }
 
-        usuario.setEmailConfirmado(true);
+
+        
+        // Email confirmado automaticamente (validação desabilitada)
+        usuario.setEmailConfirmado(true); 
+        
+        // Salva o usuário
 
         return usuarioRepository.save(usuario);
     }
@@ -170,6 +175,23 @@ public class UsuarioService {
         return usuarioRepository.findByUsername(username);
     }
 
+
+    /**
+     * Cria um usuário vinculado ao Google OAuth.
+     * Não verifica CPF (pode ser nulo), não envia e-mail de confirmação.
+     */
+    public Usuario salvarUsuarioGoogle(Usuario usuario) {
+        if (usuario.getUsername() != null
+                && usuarioRepository.findUserByUsername(usuario.getUsername()) != null) {
+            throw new CampoDuplicadoException("Nome de Login já existe.");
+        }
+        if (usuario.getEmail() != null
+                && usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new CampoDuplicadoException("Email já existe.");
+        }
+        usuario.setEmailConfirmado(true);
+        return usuarioRepository.save(usuario);
+    }
 
     public void alterarSenha(Long id, String senhaAtual, String novaSenha) {
         Usuario usuario = usuarioRepository.findById(id)

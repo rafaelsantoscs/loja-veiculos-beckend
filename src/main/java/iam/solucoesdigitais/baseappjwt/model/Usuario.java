@@ -20,7 +20,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false)
@@ -29,14 +29,17 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String telefone;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String termo;
 
-    @Column(nullable = false, unique = true, length = 14)
+    @Column(nullable = true, unique = true, length = 20)
     private String cpf;
+
+    @Column(name = "google_id", nullable = true, unique = true)
+    private String googleId;
     
     @Column(name = "email_confirmado")
     private Boolean emailConfirmado = false;
@@ -66,7 +69,14 @@ public class Usuario implements UserDetails {
     @Column(name = "imagem_url")
     private String imagemUrl;
 
-    // Getters e Setters para imagemUrl
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
     public String getImagemUrl() {
         return imagemUrl;
     }
